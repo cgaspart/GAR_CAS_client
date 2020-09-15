@@ -18,7 +18,7 @@
     "express": "^4.12.3",
     "express-session": "^1.11.1"
   },
-  "author": "",
+  "author": "spart",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/cgaspart/GAR_CAS_client/issues"
