@@ -3,6 +3,7 @@ Forked from https://github.com/kylepixel/cas-authentication because it needed to
 
 * CAS parameter `renew` ommitted when option `renew = false`
 * Fixed issue related to relative paths when accessing CAS
+* Logout propagation for ENT client
 
 # Express CAS Authentication
 
