@@ -312,12 +312,12 @@ CASAuthentication.prototype.logout = function (req, res, next) {
 		response.setEncoding('utf8');
 		var body = '';
 		response.on('data', function (chunk) {
-			return body += chunk;
-		}.bind(this));
-		response.on('end', function () {
 			console.log('========================= BODY =================')
 			console.log(body)
 			console.log('================================================')
+			return body += chunk;
+		}.bind(this));
+		response.on('end', function () {
 		}.bind(this));
 		response.on('error', function (err) {
 			console.log('Response error from CAS: ', err);
