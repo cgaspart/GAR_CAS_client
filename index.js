@@ -284,12 +284,16 @@ CASAuthentication.prototype.logout = function (req, res, next) {
 			delete req.session[this.session_info];
 		}
 	}
-/*
+
 	// GAR logout propagation
 	var requestOptions = {
 		host: this.cas_host,
 		port: this.cas_port,
 	};
+
+	console.log('========================= MY TICKET =======================')
+	console.log(req.query.ticket)
+	console.log('===========================================================')
 
 	var logoutRequest = '<?xml version="1.0" encoding="utf-8"?>\n' +
 		'<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">\n' +
@@ -357,7 +361,6 @@ CASAuthentication.prototype.logout = function (req, res, next) {
 		request.write(logoutRequest);
 	}
 	request.end();
-	*/
 	// Redirect the client to the CAS logout.
 	res.redirect(this.cas_url + '/logout');
 };
