@@ -269,6 +269,10 @@ CASAuthentication.prototype._login = function (req, res, next) {
  */
 CASAuthentication.prototype.logout = function (req, res, next) {
 
+	console.log('========================= MY TICKET =======================')
+	console.log(req.session)
+	console.log('===========================================================')
+
 	// Destroy the entire session if the option is set.
 	if (this.destroy_session) {
 		req.session.destroy(function (err) {
@@ -284,9 +288,7 @@ CASAuthentication.prototype.logout = function (req, res, next) {
 			delete req.session[this.session_info];
 		}
 	}
-	console.log('========================= MY TICKET =======================')
-	console.log(this)
-	console.log('===========================================================')
+	
 	// GAR logout propagation
 	/*
 	var requestOptions = {
