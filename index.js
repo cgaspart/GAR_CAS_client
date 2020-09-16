@@ -317,7 +317,7 @@ CASAuthentication.prototype.logout = function (req, res, next) {
 	});
 	requestOptions.headers = {
 		'Content-Type': 'text/xml',
-		'Content-Length': Buffer.byteLength(post_data)
+		'Content-Length': Buffer.byteLength(logoutRequest)
 	};
 
 	var request = this.request_client.request(requestOptions, function (response) {
