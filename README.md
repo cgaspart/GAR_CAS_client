@@ -21,7 +21,7 @@ It also provides two route endpoint functions:
 
 ## Installation
 
-    npm install keeps-cas-authentication
+    npm i @wweeddoo/gar_cas_client
 
 ## Setup
 
