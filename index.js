@@ -286,6 +286,11 @@ CASAuthentication.prototype.logout = function (req, res, next) {
 	}
 
 	// GAR logout propagation
+	var requestOptions = {
+		host: this.cas_host,
+		port: this.cas_port,
+	};
+
 	var logoutRequest = '<?xml version="1.0" encoding="utf-8"?>\n' +
 		'<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">\n' +
 		'  <SOAP-ENV:Header/>\n' +
@@ -349,7 +354,7 @@ CASAuthentication.prototype.logout = function (req, res, next) {
 
 	if (this.cas_version === 'saml1.1') {
 		console.log('CAS WRITING LOGOUT')
-		request.write(post_data);
+		request.write(logoutRequest);
 	}
 	request.end();
 	// Redirect the client to the CAS logout.
@@ -367,6 +372,7 @@ CASAuthentication.prototype._handleTicket = function (req, res, next) {
 	};
 
 	if (['1.0', '2.0', '3.0'].indexOf(this.cas_version) >= 0) {
+		console.log('================== CLASSIC CAS VERSION ===================')
 		requestOptions.method = 'GET';
 		requestOptions.path = url.format({
 			pathname: this.cas_path + this._validateUri,
@@ -377,6 +383,7 @@ CASAuthentication.prototype._handleTicket = function (req, res, next) {
 		});
 	}
 	else if (this.cas_version === 'saml1.1') {
+		console.log('==================== ITS SAML1.1 ================')
 		var now = new Date();
 		var post_data = '<?xml version="1.0" encoding="utf-8"?>\n' +
 			'<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">\n' +
