@@ -270,71 +270,13 @@ CASAuthentication.prototype._login = function (req, res, next) {
 CASAuthentication.prototype.logout = function (req, res, next) {
 
 	console.log('========================= MY TICKET =======================')
+	console.log('FULL REQ: ', req)
+	console.log('FULL query', req.query)
+	console.log('FULL SESSION', req.session)
 	console.log('real ticket: ', req.query.ticket)
 	console.log('CASUser: ', req.session.cas_user)
 	console.log('===========================================================')
 
-	var requestOptions = {
-		host: this.cas_host,
-		port: this.cas_port,
-	};
-
-	var logoutRequest = '<?xml version="1.0" encoding="utf-8"?>\n' +
-		'<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">\n' +
-		'  <SOAP-ENV:Header/>\n' +
-		'  <SOAP-ENV:Body>\n' +
-		'    <samlp:LogoutRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"\n' +
-		'      xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"\n' +
-		'      ID="="_-741761874666450647"\n' +
-		'      Version="2.0"\n' +
-		'      IssueInstant="' + new Date().toISOString() + '">\n' +
-		'      <saml:NameID>@NOT_USED@</saml:NameID>\n' +
-		'      <samlp:SessionIndex>\n' +
-		'        ' + req.session.cas_user + '\n' +
-		'      </samlp:SessionIndex>\n' +
-		'    </samlp:LogoutRequest>\n' +
-		'  </SOAP-ENV:Body>\n' +
-		'</SOAP-ENV:Envelope>';
-	requestOptions.method = 'POST';
-	requestOptions.path = url.format({
-		pathname: this.cas_path + this._validateUri,
-		query: {
-			TARGET: this.service_url + url.parse(req.originalUrl).pathname,
-			ticket: ''
-		}
-	});
-	requestOptions.headers = {
-		'Content-Type': 'text/xml',
-		'Content-Length': Buffer.byteLength(logoutRequest)
-	};
-
-	var request = this.request_client.request(requestOptions, function (response) {
-		response.setEncoding('utf8');
-		var body = '';
-		response.on('data', function (chunk) {
-			console.log('========================= BODY =================')
-			console.log(body)
-			console.log('================================================')
-			return body += chunk;
-		}.bind(this));
-		response.on('end', function () {
-		}.bind(this));
-		response.on('error', function (err) {
-			console.log('Response error from CAS: ', err);
-			res.sendStatus(401);
-		}.bind(this));
-	}.bind(this));
-
-	request.on('error', function (err) {
-		console.log('Request error with CAS: ', err);
-		res.sendStatus(401);
-	}.bind(this));
-
-	if (this.cas_version === 'saml1.1') {
-		console.log('CAS WRITING LOGOUT')
-		request.write(logoutRequest);
-	}
-	request.end();
 
 	// Destroy the entire session if the option is set.
 	if (this.destroy_session) {
@@ -351,82 +293,7 @@ CASAuthentication.prototype.logout = function (req, res, next) {
 			delete req.session[this.session_info];
 		}
 	}
-	
-	// GAR logout propagation
-	/*
-	var requestOptions = {
-		host: this.cas_host,
-		port: this.cas_port,
-	};
 
-	var logoutRequest = '<?xml version="1.0" encoding="utf-8"?>\n' +
-		'<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">\n' +
-		'  <SOAP-ENV:Header/>\n' +
-		'  <SOAP-ENV:Body>\n' +
-		'    <samlp:LogoutRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"\n' +
-		'      xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"\n' +
-		'      ID="="_-741761874666450647"\n' +
-		'      Version="2.0"\n' +
-		'      IssueInstant="' + new Date().toISOString() + '">\n' +
-		'      <saml:NameID>@NOT_USED@</saml:NameID>\n' +
-		'      <samlp:SessionIndex>\n' +
-		'        ' + req.query.ticket + '\n' +
-		'      </samlp:SessionIndex>\n' +
-		'    </samlp:LogoutRequest>\n' +
-		'  </SOAP-ENV:Body>\n' +
-		'</SOAP-ENV:Envelope>';
-	requestOptions.method = 'POST';
-	requestOptions.path = url.format({
-		pathname: this.cas_path + this._validateUri,
-		query: {
-			TARGET: this.service_url + url.parse(req.originalUrl).pathname,
-			ticket: ''
-		}
-	});
-	requestOptions.headers = {
-		'Content-Type': 'text/xml',
-		'Content-Length': Buffer.byteLength(logoutRequest)
-	};
-
-	var request = this.request_client.request(requestOptions, function (response) {
-		response.setEncoding('utf8');
-		var body = '';
-		response.on('data', function (chunk) {
-			return body += chunk;
-		}.bind(this));
-		response.on('end', function () {
-			this._validate(body, function (err, user, attributes) {
-				if (err) {
-					console.log(err);
-					res.sendStatus(401);
-				}
-				else {
-					req.session[this.session_name] = user;
-					if (this.session_info) {
-						req.session[this.session_info] = attributes || {};
-					}
-					res.redirect(req.session.cas_return_to);
-				}
-			}.bind(this));
-		}.bind(this));
-		response.on('error', function (err) {
-			console.log('Response error from CAS: ', err);
-			res.sendStatus(401);
-		}.bind(this));
-	}.bind(this));
-
-	request.on('error', function (err) {
-		console.log('Request error with CAS: ', err);
-		res.sendStatus(401);
-	}.bind(this));
-
-	if (this.cas_version === 'saml1.1') {
-		console.log('CAS WRITING LOGOUT')
-		request.write(logoutRequest);
-	}
-	request.end();
-*/
-	// Redirect the client to the CAS logout.
 	res.redirect(this.cas_url + '/logout');
 };
 
