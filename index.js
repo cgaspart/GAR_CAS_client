@@ -275,7 +275,7 @@ CASAuthentication.prototype.logout = function (req, res, next) {
 	console.log('FULL SESSION', req.session)
 	console.log('real ticket: ', req.query.ticket)
 	console.log('CASUser: ', req.session.cas_user)
-	console.log('MEMORY STORAGE', req.MemoryStore)
+	console.log('MEMORY STORAGE', req.sessionStore)
 	console.log('===========================================================')
 
 
